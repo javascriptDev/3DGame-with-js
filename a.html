@@ -2,8 +2,95 @@
 <html>
 <head>
     <title></title>
+    <script src="three.js"></script>
+    <style type="text/css">
+        body {
+            overflow: hidden;
+            margin: 0;;
+        }
+    </style>
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColorHex(0xEEEEEE);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+
+        var $ = function (s) {
+            return document.querySelector(s);
+        }
+        window.onload = function () {
+            var axes = new THREE.AxisHelper(30);
+            scene.add(axes);
+
+            //    添加AmbientLight
+//            var ambientLight = new THREE.AmbientLight('#CD0000');
+//            scene.add(ambientLight);
+
+
+            //添加灯光效果
+            var spolight = new THREE.SpotLight(0xffffff);
+            spolight.position.set(-50, 50, -10);
+            spolight.castShadow = true;
+            scene.add(spolight);
+
+            //添加背景
+            var planeGeometry = new THREE.PlaneGeometry(1000, 40);
+            var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc});
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.rotation.z = 0.75 * Math.PI;
+
+
+            plane.position.x = 0;
+            plane.position.y = -20;
+            plane.position.z = -5;
+            plane.receiveShadow = true;
+            scene.add(plane);
+
+            //设置相机位置
+            camera.position.x = -30;
+            camera.position.y = 40;
+            camera.position.z = 30;
+            camera.lookAt(scene.position);
+
+            //添加立方体
+            var cube = new THREE.CubeGeometry(2, 2, 2);
+            mesh = new THREE.Mesh(cube, new THREE.MeshDepthMaterial({color: 0x456123}));
+            mesh.castShadow = true;
+            mesh.position.x = -35;
+            mesh.position.z = -15;
+            scene.add(mesh);
+
+            $("#WebGL-output").appendChild(renderer.domElement);
+            renderer.render(scene, camera);
+        }
+        var step = 0.3;
+        document.onkeydown = function (e) {
+            console.log(e);
+            if (e.keyCode == 38) {//up
+                mesh.position.x += step;
+                mesh.position.z -= step;
+            } else if (e.keyCode == 39) {//right
+                mesh.position.x += step;
+                mesh.position.z += step;
+            } else if (e.keyCode == 37) {//left
+                mesh.position.x -= step;
+                mesh.position.z -= step;
+            } else if (e.keyCode == 40) {// down
+                mesh.position.x -= step;
+                mesh.position.z += step;
+            }
+            renderer.render(scene, camera);
+        }
+
+    </script>
 </head>
 <body>
+
+
+<div id="WebGL-output"></div>
 
 </body>
 </html>
